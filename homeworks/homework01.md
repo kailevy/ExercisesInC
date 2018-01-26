@@ -14,11 +14,11 @@ a clear, concise, complete sentence or two.
 
 1) Give an example of a feature common in interpreted languages that is rare in compiled languages.
 
-Dynamic typing.
+Dynamic typing is common in interpretted languages.
 
 2) Name two advantages of static typing over dynamic typing.
 
-Harder to use wrong and get unexplainable errors. Saves memory.
+Static typing is harder to use wrong and get unexplainable errors. It also saves memory.
 
 3) Give an example of a static semantic error.
 
