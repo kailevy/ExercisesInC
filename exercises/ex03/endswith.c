@@ -27,8 +27,16 @@ returns: 1 if true, 0 otherwise
 */
 int endswith(char *s, char *suffix)
 {
-    // TODO: Fill this in!
-    return 0;
+    int slen = strlen(s);
+    int suflen = strlen(suffix);
+    int i;
+    for (i=0; i<suflen; i++) {
+        if (s[slen-i-1] != suffix[suflen-i-1]) {
+            return 0;
+        }
+        // printf("%c %c\n", s[slen-i-1], suffix[suflen-i-1]);
+    }
+    return 1;
 }
 
 
@@ -47,7 +55,7 @@ int main (int argc, char *argv[])
     test_endswith("endswith", "offendswith", 0);
 
     // what's the right answer?
-    // test_endswith("endswith", "", ?);
+    test_endswith("endswith", "", 1);
 
     printf("All tests passed\n");
 }
