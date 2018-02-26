@@ -2,16 +2,17 @@
 
 ### C Exercises
 
-Modify the link below so it points to the `ex02.5` directory in your
+Modify the link below so it points to the `ex03` directory in your
 student repository.
 
-[Here is a link to the ex02.5 directory in my repository](https://github.com/kailevy/ExercisesInC/tree/master/exercises/ex02.5)
+[Here is a link to the ex03 directory in my repository](https://github.com/kailevy/ExercisesInC/tree/master/exercises/ex03)
 
-### Think OS Chapter 3 reading questions
+### Think OS Chapter 4 reading questions
 
-### Virtual memory
+**Files and file systems**
 
-1) The Georgian alphabet has 33 letters.  How many bit are needed to specify a letter?
+1) What abstractions do file systems provide?  Give an example of something that is logically 
+true about files systems but not true of their implementations.
 
 The closest power of 2 above 33 is 2^6=64, so 6 bits.
 
@@ -43,3 +44,8 @@ A dictionary.
 8) What is a context switch?
 
 When the OS interrupts a process, saves its state, and switches to another.
+
+If you would like to learn more about file systems, a good next step is to learn about journaling file systems.  
+Start with [this Wikipedia article](https://en.wikipedia.org/wiki/Journaling_file_system), then 
+[Anatomy of Linux Journaling File Systems](http://www.ibm.com/developerworks/library/l-journaling-filesystems/index.html).  
+Also consider reading [this USENIX paper](https://www.usenix.org/legacy/event/usenix05/tech/general/full_papers/prabhakaran/prabhakaran.pdf).
