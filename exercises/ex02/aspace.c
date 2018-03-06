@@ -24,14 +24,11 @@ int main ()
     void *p = malloc(18);
     void *t = malloc(18);
     char *s = "Literal string";
-
-    printf ("Address of main is %p\n", main);
     printf ("Address of var1 is %p\n", &var1);
     printf ("Address of var2 is %p\n", &var2);
     printf ("Address of p is %p\n", p);
     printf ("Address of t is %p\n", t);
     printf ("Address of s is %p\n", s);
-
     printer();
 
     return 0;
