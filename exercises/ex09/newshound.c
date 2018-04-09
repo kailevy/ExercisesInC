@@ -22,6 +22,9 @@ void error(char *msg)
 
 int main(int argc, char *argv[])
 {
+    pid_t pid;
+    int status;
+
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <search phrase>\n", argv[0]);
         return 1;
@@ -40,13 +43,32 @@ int main(int argc, char *argv[])
     char var[255];
 
     for (int i=0; i<num_feeds; i++) {
+        pid = fork();
         sprintf(var, "RSS_FEED=%s", feeds[i]);
         char *vars[] = {var, NULL};
 
-        int res = execle(PYTHON, PYTHON, SCRIPT, search_phrase, NULL, vars);
-        if (res == -1) {
-            error("Can't run script.");
+        if (pid == 0) {
+            int res = execle(PYTHON, PYTHON, SCRIPT, search_phrase, NULL, vars);
+            if (res == -1) {
+                error("Can't run script.");
+            }
+        } else {
+            continue;
         }
+    }
+    
+    for (int i=0; i<num_feeds; i++) {
+        pid = wait(&status);
+
+        if (pid == -1) {
+            fprintf(stderr, "wait failed: %s\n", strerror(errno));
+            perror(argv[0]);
+            exit(1);
+        }
+
+        // check the exit status of the child
+        status = WEXITSTATUS(status);
+        printf("Child %d exited with error code %d.\n", pid, status);
     }
     return 0;
 }

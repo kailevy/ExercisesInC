@@ -19,6 +19,8 @@ License: MIT License https://opensource.org/licenses/MIT
 // error information
 extern int errno;
 
+int globalval = 0;
+
 
 // get_seconds returns the number of seconds since the
 // beginning of the day, with microsecond precision
@@ -30,9 +32,12 @@ double get_seconds() {
 }
 
 
-void child_code(int i)
+void child_code(int i, int *stackval, int *heapval)
 {
     sleep(i);
+    *stackval += 1;
+    *heapval += 1;
+    globalval += 1;
     printf("Hello from child %d.\n", i);
 }
 
@@ -46,6 +51,10 @@ int main(int argc, char *argv[])
     double start, stop;
     int i, num_children;
 
+    int stackval= 10;
+    int *heapval = malloc(sizeof(int));
+    *heapval = 100;
+
     // the first command-line argument is the name of the executable.
     // if there is a second, it is the number of children to create.
     if (argc == 2) {
@@ -57,11 +66,14 @@ int main(int argc, char *argv[])
     // get the start time
     start = get_seconds();
 
+    printf("PARENT BEGIN\nstackval: %d, heapval: %d, globalval: %d\n", stackval, *heapval, globalval);
+
     for (i=0; i<num_children; i++) {
 
         // create a child process
         printf("Creating child %d.\n", i);
         pid = fork();
+
 
         /* check for an error */
         if (pid == -1) {
@@ -72,13 +84,17 @@ int main(int argc, char *argv[])
 
         /* see if we're the parent or the child */
         if (pid == 0) {
-            child_code(i);
+            printf("Address: %p\n", &pid);
+            child_code(i, &stackval, heapval);
+
+            printf("CHILD %d\nstackval: %d, heapval: %d, globalval: %d\n", i, stackval, *heapval, globalval);
             exit(i);
         }
     }
 
     /* parent continues */
     printf("Hello from the parent.\n");
+
 
     for (i=0; i<num_children; i++) {
         pid = wait(&status);
@@ -97,5 +113,13 @@ int main(int argc, char *argv[])
     stop = get_seconds();
     printf("Elapsed time = %f seconds.\n", stop - start);
 
+    printf("PARENT END\nstackval: %d, heapval: %d, globalval: %d\n", stackval, *heapval, globalval);
+
     exit(0);
 }
+
+/* We create a global var, a stack var and a heap var and initialize them. Then, in each of the children's code, we increment them.
+We print them in the child and see that they have incremented, but they are the same for each child, so the children aren't sharing
+variables. And when we print them at the end, they are back to the initial values, so they aren't sharing variables with the parent
+either. */
+ 
