@@ -75,17 +75,17 @@ void child_code(Shared *shared)
   //printf("Starting child at counter %d\n", shared->counter);
 
   while (1) {
+    mutex_lock(shared->mutex);
     if (shared->counter >= shared->end) {
       return;
     }
-    mutex_lock(shared->mutex);
     shared->array[shared->counter]++;
     shared->counter++;
-    mutex_unlock(shared->mutex);
 
     if (shared->counter % 10000 == 0) {
       //printf("%d\n", shared->counter);
     }
+    mutex_unlock(shared->mutex);
   }
 }
 
