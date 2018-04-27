@@ -43,6 +43,11 @@ void kv_printor (gpointer key, gpointer value, gpointer user_data)
     printf(user_data, key, *(gint *) value);
 }
 
+void free_seq(gpointer value, gpointer user_data)
+{
+    Pair *pair = (Pair *) value;
+    g_free(pair);
+}
 
 /* Iterator that adds key-value pairs to a sequence. */
 void accumulator(gpointer key, gpointer value, gpointer user_data)
@@ -62,13 +67,13 @@ void accumulator(gpointer key, gpointer value, gpointer user_data)
 void incr(GHashTable* hash, gchar *key)
 {
     gint *val = (gint *) g_hash_table_lookup(hash, key);
-
     if (val == NULL) {
         gint *val1 = g_new(gint, 1);
         *val1 = 1;
         g_hash_table_insert(hash, key, val1);
     } else {
         *val += 1;
+        g_free(key);
     }
 }
 
@@ -93,17 +98,17 @@ int main(int argc, char** argv)
     (one-L) NUL terminated strings */
     gchar **array;
     gchar line[128];
-    GHashTable* hash = g_hash_table_new(g_str_hash, g_str_equal);
+    GHashTable* hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,  g_free);
 
     // read lines from the file and build the hash table
     while (1) {
         gchar *res = fgets(line, sizeof(line), fp);
         if (res == NULL) break;
-
         array = g_strsplit(line, " ", 0);
         for (int i=0; array[i] != NULL; i++) {
             incr(hash, array[i]);
         }
+        g_free(array);
     }
     fclose(fp);
 
@@ -115,11 +120,14 @@ int main(int argc, char** argv)
     g_hash_table_foreach(hash, (GHFunc) accumulator, (gpointer) seq);
 
     // iterate the sequence and print the pairs
-    g_sequence_foreach(seq, (GFunc) pair_printor, NULL);
+    // g_sequence_foreach(seq, (GFunc) pair_printor, NULL);
 
+    g_sequence_foreach(seq, (GFunc) free_seq, NULL);
     // try (unsuccessfully) to free everything
+    // (in a future exercise, we will fix the memory leaks)
     g_hash_table_destroy(hash);
     g_sequence_free(seq);
+
 
     return 0;
 }

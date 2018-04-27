@@ -54,10 +54,15 @@ void print_matrix(Matrix *matrix) {
     }
 }
 
+int compare_row(const void* a, const void *b) {
+    return **(double **) b - **(double **) a;
+}
+
 /* Sort rows in descending order by first element.
 */
 void sort_matrix_rows(Matrix *matrix) {
     // TODO: Write this function
+    qsort(matrix->rows, matrix->num_rows, sizeof(double), compare_row);
 }
 
 /* Perform row reduction.
